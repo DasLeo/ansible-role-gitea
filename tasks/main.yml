@@ -1,0 +1,133 @@
+---
+
+- name: install git package
+  apt:
+    name: git
+    state: present
+
+- name: create gitea service user
+  user:
+    state: present
+    name: "{{ gitea_user }}"
+    shell: /bin/false
+    system: yes
+    create_home: yes
+    comment: gitea service user,,,
+
+- name: create gitea workdir
+  file:
+    path: "{{ gitea_directory }}"
+    state: directory
+    owner: "{{ gitea_user }}"
+    group: "{{ gitea_user }}"
+    mode: 0755
+
+- name: download Gitea binary
+  get_url:
+    url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"
+    dest: /usr/local/bin/gitea
+    owner: root
+    mode: 0755
+
+- name: copy spigot systemd service
+  template:
+    src: gitea-systemd.service.j2
+    dest: /etc/systemd/system/gitea.service
+    owner: root
+    mode: 0644
+  notify: systemd daemon reload
+
+- name: create Gitea config directory
+  file:
+    path: /etc/gitea
+    state: directory
+
+- name: check if Gitea config file exists
+  stat:
+    path: /etc/gitea/app.ini
+  register: gitea_config_exists
+
+- name: generate new config file with tokens
+  block:
+    - name: download latest Gitea binary required for token generation
+      get_url:
+        url: https://dl.gitea.io/gitea/master/gitea-master-linux-amd64
+        dest: /usr/local/bin/gitea-master-linux-amd64
+        owner: root
+        mode: 0755
+
+    - name: Generate internal token
+      shell: 'sudo -H -u gitea bash -c "/usr/local/bin/gitea-master-linux-amd64 generate secret INTERNAL_TOKEN | tail -n 1"'
+      args:
+        chdir: "{{ gitea_directory }}"
+      environment:
+        GITEA_WORK_DIR: "{{ gitea_directory }}"
+        USER: "{{ gitea_user }}"
+      register: new_internal_token
+
+    - name: Generate LFS JWT secret
+      shell: 'sudo -H -u gitea bash -c "/usr/local/bin/gitea-master-linux-amd64 generate secret LFS_JWT_SECRET | tail -n 1"'
+      args:
+        chdir: "{{ gitea_directory }}"
+      environment:
+        GITEA_WORK_DIR: "{{ gitea_directory }}"
+        USER: "{{ gitea_user }}"
+      register: new_lfs_jwt_secret
+
+    - name: Generate secret key
+      shell: 'sudo -H -u gitea bash -c "/usr/local/bin/gitea-master-linux-amd64 generate secret SECRET_KEY | tail -n 1"'
+      args:
+        chdir: "{{ gitea_directory }}"
+      environment:
+        GITEA_WORK_DIR: "{{ gitea_directory }}"
+        USER: "{{ gitea_user }}"
+      register: new_secret_key
+
+    - name: Create the app.ini file from the template
+      template:
+        src: gitea-app.ini.j2
+        dest: /etc/gitea/app.ini
+        owner: root
+        mode: 0644
+      vars:
+        initial_internal_token: '{{ new_internal_token.stdout }}'
+        initial_lfs_jwt_secret: '{{ new_lfs_jwt_secret.stdout }}'
+        initial_secret_key: '{{ new_secret_key.stdout }}'
+
+    - name: removed unused latest binary
+      file:
+        path: /usr/local/bin/gitea-master-linux-amd64
+        state: absent
+
+    - name: delete temporarily created files
+      file:
+        path: "{{ gitea_directory }}"
+        state: absent
+
+    - name: re-create gitea workdir
+      file:
+        path: "{{ gitea_directory }}"
+        state: directory
+        owner: "{{ gitea_user }}"
+        group: "{{ gitea_user }}"
+        mode: 0755
+  when: gitea_config_exists.stat.exists == False
+
+- name: Copy Gitea config to host
+  template:
+    src: gitea-app.ini.j2
+    dest: /etc/gitea/app.ini
+    owner: root
+    mode: 0644
+  notify: restart gitea
+  when: gitea_config_exists.stat.exists == True
+
+- name: install memcached packages
+  include_role:
+    name: memcached
+
+- name: start Gitea systemd service
+  systemd:
+    name: gitea
+    state: started
+    enabled: yes

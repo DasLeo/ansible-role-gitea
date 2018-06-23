@@ -1,0 +1,84 @@
+APP_NAME = Gitea: Git with a cup of tea
+RUN_USER = {{ gitea_user }}
+RUN_MODE = prod
+
+[security]
+INTERNAL_TOKEN = {% if initial_internal_token is defined %}{{ initial_internal_token }}{% else %}{{ gitea_internal_token }}{% endif %}{{''}}
+INSTALL_LOCK   = true
+SECRET_KEY     = {% if initial_secret_key is defined %}{{ initial_secret_key }}{% else %}{{ gitea_secret_key }}{% endif %}{{''}}
+
+[database]
+DB_TYPE  = sqlite3
+HOST     = 127.0.0.1:3306
+NAME     = gitea
+USER     = gitea
+PASSWD   = 
+SSL_MODE = disable
+PATH     = {{ gitea_directory }}/data/gitea.db
+
+[repository]
+ROOT = {{ gitea_directory }}/gitea-repositories
+
+[server]
+SSH_DOMAIN       = git.kotgaming.net
+DOMAIN           = git.kotgaming.net
+HTTP_PORT        = 3000
+ROOT_URL         = https://git.kotgaming.net/
+DISABLE_SSH      = true
+SSH_PORT         = 22
+LFS_START_SERVER = true
+LFS_CONTENT_PATH = {{ gitea_directory }}/data/lfs
+LFS_JWT_SECRET   = {% if initial_lfs_jwt_secret is defined %}{{ initial_lfs_jwt_secret }}{% else %}{{ gitea_lfs_jwt_secret }}{% endif %}{{''}}
+OFFLINE_MODE     = false
+
+[mailer]
+ENABLED = true
+HOST    = mx1.lxd:587
+FROM    = "KotGit" <git@kotgaming.net>
+USER    = 
+PASSWD  = 
+SKIP_VERIFY = true
+
+[service]
+REGISTER_EMAIL_CONFIRM            = false
+ENABLE_NOTIFY_MAIL                = true
+DISABLE_REGISTRATION              = true
+ENABLE_CAPTCHA                    = false
+REQUIRE_SIGNIN_VIEW               = true
+DEFAULT_KEEP_EMAIL_PRIVATE        = false
+DEFAULT_ALLOW_CREATE_ORGANIZATION = true
+DEFAULT_ENABLE_TIMETRACKING       = true
+NO_REPLY_ADDRESS                  = noreply.kotgaming.net
+
+[picture]
+DISABLE_GRAVATAR        = false
+ENABLE_FEDERATED_AVATAR = true
+
+[openid]
+ENABLE_OPENID_SIGNIN = false
+ENABLE_OPENID_SIGNUP = false
+
+[cache]
+ADAPTER = memcache
+HOST    = 127.0.0.1:11211
+
+[session]
+PROVIDER = file
+
+[log]
+; MODE      = file,console
+MODE      = file
+LEVEL     = Info
+ROOT_PATH = {{ gitea_directory }}/log
+
+[log.file]
+; This enables automated log rotate(switch of following options), default is true
+LOG_ROTATE = true
+; Max number of lines in a single file, default is 1000000
+MAX_LINES = 1000000
+; Max size shift of a single file, default is 28 means 1 << 28, 256MB
+MAX_SIZE_SHIFT = 28
+; Segment log daily, default is true
+DAILY_ROTATE = true
+; delete the log file after n days, default is 7
+MAX_DAYS = 7

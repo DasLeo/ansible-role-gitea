@@ -1,0 +1,10 @@
+---
+
+# no reload command available for gitea.service
+- name: restart gitea
+  systemd:
+    name: gitea
+    state: restarted
+- name: systemd daemon reload
+  systemd:
+    daemon_reload: yes

@@ -1,0 +1,5 @@
+---
+
+gitea_user: gitea
+gitea_version: 1.4.2
+gitea_directory: /var/lib/gitea
