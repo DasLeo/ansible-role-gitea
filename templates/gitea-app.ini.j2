@@ -64,7 +64,9 @@ INTERVAL = {{ gitea_cache_interval }}
 HOST     = {{ gitea_cache_host }}
 
 [session]
-PROVIDER = file
+PROVIDER         = file
+GC_INTERVAL_TIME = {{ gitea_gc_interval_time }}
+
 
 [log]
 ; MODE      = file,console
