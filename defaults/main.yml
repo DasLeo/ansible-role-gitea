@@ -3,3 +3,23 @@
 gitea_user: gitea
 gitea_version: 1.4.2
 gitea_directory: /var/lib/gitea
+gitea_disable_ssh: 'false'
+gitea_domain: git.example.net
+gitea_root_url: 'https://git.example.net/'
+gitea_ssh_domain: git.example.net
+gitea_ssh_port: 22
+gitea_http_port: 3000
+gitea_mailer_host: 'mailserver.example.net:587'
+gitea_mailer_from: '"Gitea" <gitea@example.net>'
+gitea_mailer_user: ''
+gitea_mailer_passwd: ''
+gitea_mailer_skip_ssl_verify: 'true'
+gitea_disable_registration: 'true'
+gitea_no_reply_address: noreply.example.net
+# memory , redis or memcache
+gitea_cache_adapter: memory
+# cache interval in seconds
+gitea_cache_interval: 60
+# Redis: network=tcp,addr=127.0.0.1:6379,password=macaron,db=0,pool_size=100,idle_timeout=180
+# Memache: 127.0.0.1:9090;127.0.0.1:9091
+gitea_cache_host: ''
