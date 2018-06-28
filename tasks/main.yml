@@ -51,7 +51,7 @@
         mode: 0755
       when: gitea_version is version('current_version', '>')
 
-    - name: Creating synlink to Gitea binary {{ gitea_version }}
+    - name: Creating symlink to Gitea binary {{ gitea_version }}
       file:
         src: /usr/local/bin/gitea-{{ gitea_version }}-linux-amd64
         dest: /usr/local/bin/gitea
