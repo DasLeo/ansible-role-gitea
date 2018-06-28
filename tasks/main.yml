@@ -58,6 +58,7 @@
         dest: /usr/local/bin/gitea
         state: link
         force: yes
+      notify: restart gitea
       when: gitea_version is version('current_version', '>') or not gitea_binary.stat.islnk
   when: gitea_binary.stat.exists
 
@@ -67,7 +68,9 @@
     dest: /etc/systemd/system/gitea.service
     owner: root
     mode: 0644
-  notify: systemd daemon reload
+  notify:
+    - systemd daemon reload
+    - restart gitea
 
 - name: create Gitea config directory
   file:
