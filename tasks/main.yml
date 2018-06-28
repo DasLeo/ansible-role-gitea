@@ -44,9 +44,6 @@
         current_version: "{{ gitea_binary.stat.lnk_target | basename | regex_replace('^gitea-([^-]*)-linux-amd64$', '\\1') }}"
       when: gitea_binary.stat.islnk
 
-    - debug:
-        msg: "current version is {{ current_version }}"
-
     - name: Updating to newer Gitea binary {{ gitea_version }}
       get_url:
         url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"
