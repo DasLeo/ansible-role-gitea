@@ -22,12 +22,20 @@
     group: "{{ gitea_user }}"
     mode: 0755
 
-- name: download Gitea binary
-  get_url:
-    url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"
-    dest: /usr/local/bin/gitea
-    owner: root
-    mode: 0755
+- name: check if Gitea Go binary exists
+  stat:
+    path: /usr/local/bin/gitea
+  register: gitea_binary
+
+- name: First install of Gitea binary
+  block:
+    - name: download Gitea binary
+      get_url:
+        url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"
+        dest: /usr/local/bin/gitea
+        owner: root
+        mode: 0755
+  when: not gitea_binary.stat.exists
 
 - name: copy spigot systemd service
   template:
