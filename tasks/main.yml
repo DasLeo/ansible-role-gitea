@@ -60,6 +60,20 @@
         force: yes
       notify: restart gitea
       when: gitea_version is version(current_version, '>') or not gitea_binary.stat.islnk
+
+    - name: determine older versions
+      find:
+        path: /usr/local/bin/
+        pattern: "gitea-*-linux-amd64"
+        exclude: "gitea-{{ current_version }}-linux-amd64"
+      register: old_versions
+      when: gitea_binary.stat.islnk
+
+    - name: Removing older Gitea binaries
+      file:
+        path: "/usr/local/bin/{{ item.path|basename }}"
+        state: absent
+      loop: "{{ old_versions.files }}"
   when: gitea_binary.stat.exists
 
 - name: copy spigot systemd service
