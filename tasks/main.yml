@@ -53,7 +53,7 @@
         dest: /usr/local/bin/gitea-{{ gitea_version }}-linux-amd64
         owner: root
         mode: 0755
-      when: gitea_version is version('current_version', '>') or not gitea_binary.stat.islnk
+      when: gitea_version is version(current_version, '>') or not gitea_binary.stat.islnk
 
     - name: Creating symlink to Gitea binary {{ gitea_version }}
       file:
@@ -62,7 +62,7 @@
         state: link
         force: yes
       notify: restart gitea
-      when: gitea_version is version('current_version', '>') or not gitea_binary.stat.islnk
+      when: gitea_version is version(current_version, '>') or not gitea_binary.stat.islnk
   when: gitea_binary.stat.exists
 
 - name: copy spigot systemd service
