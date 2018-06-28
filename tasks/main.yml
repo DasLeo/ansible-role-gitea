@@ -37,6 +37,29 @@
         mode: 0755
   when: not gitea_binary.stat.exists
 
+- name: Update installation of Gitea binary
+  block:
+    - name: determine current version
+      set_fact:
+        current_version: "{{ gitea_binary.stat.lnk_target | basename | regex_replace('^gitea-([^-]*)-linux-amd64$', '\\1') }}"
+
+    - name: Updating to newer Gitea binary {{ gitea_version }}
+      get_url:
+        url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"
+        dest: /usr/local/bin/gitea-{{ gitea_version }}-linux-amd64
+        owner: root
+        mode: 0755
+      when: gitea_version is version('current_version', '>')
+
+    - name: Creating synlink to Gitea binary {{ gitea_version }}
+      file:
+        src: /usr/local/bin/gitea-{{ gitea_version }}-linux-amd64
+        dest: /usr/local/bin/gitea
+        state: link
+        force: yes
+      when: gitea_version is version('current_version', '>')
+  when: not gitea_binary.stat.exists
+
 - name: copy spigot systemd service
   template:
     src: gitea-systemd.service.j2
