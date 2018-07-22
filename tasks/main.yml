@@ -76,7 +76,7 @@
       loop: "{{ old_versions.files }}"
   when: gitea_binary.stat.exists
 
-- name: copy spigot systemd service
+- name: copy Gitea systemd service
   template:
     src: gitea-systemd.service.j2
     dest: /etc/systemd/system/gitea.service
