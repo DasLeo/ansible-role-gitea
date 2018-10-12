@@ -65,7 +65,7 @@
       find:
         path: /usr/local/bin/
         pattern: "gitea-*-linux-amd64"
-        exclude: "gitea-{{ current_version }}-linux-amd64"
+        exclude: "gitea-{{ gitea_version }}-linux-amd64"
       register: old_versions
       when: gitea_binary.stat.islnk
 
