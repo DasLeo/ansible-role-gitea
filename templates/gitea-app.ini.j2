@@ -76,12 +76,15 @@ ROOT_PATH = {{ gitea_directory }}/log
 
 [log.file]
 ; This enables automated log rotate(switch of following options), default is true
-LOG_ROTATE = true
+LOG_ROTATE     = true
 ; Max number of lines in a single file, default is 1000000
-MAX_LINES = 1000000
+MAX_LINES      = 1000000
 ; Max size shift of a single file, default is 28 means 1 << 28, 256MB
 MAX_SIZE_SHIFT = 28
 ; Segment log daily, default is true
-DAILY_ROTATE = true
+DAILY_ROTATE   = true
 ; delete the log file after n days, default is 7
-MAX_DAYS = 7
+MAX_DAYS       = 7
+
+[oauth2]
+JWT_SECRET = {% if initial_oauth2_jwt_secret is defined %}{{ initial_oauth2_jwt_secret }}{% else %}{{ gitea_oauth2_jwt_secret }}{% endif %}{{''}}

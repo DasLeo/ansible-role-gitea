@@ -115,13 +115,22 @@
       register: new_internal_token
 
     - name: Generate LFS JWT secret
-      shell: 'sudo -H -u gitea bash -c "/usr/local/bin/gitea-master-linux-amd64 generate secret LFS_JWT_SECRET | tail -n 1"'
+      shell: 'sudo -H -u gitea bash -c "/usr/local/bin/gitea-master-linux-amd64 generate secret JWT_SECRET | tail -n 1"'
       args:
         chdir: "{{ gitea_directory }}"
       environment:
         GITEA_WORK_DIR: "{{ gitea_directory }}"
         USER: "{{ gitea_user }}"
       register: new_lfs_jwt_secret
+
+    - name: Generate Oauth2 JWT secret
+      shell: 'sudo -H -u gitea bash -c "/usr/local/bin/gitea-master-linux-amd64 generate secret JWT_SECRET | tail -n 1"'
+      args:
+        chdir: "{{ gitea_directory }}"
+      environment:
+        GITEA_WORK_DIR: "{{ gitea_directory }}"
+        USER: "{{ gitea_user }}"
+      register: new_oauth2_jwt_secret
 
     - name: Generate secret key
       shell: 'sudo -H -u gitea bash -c "/usr/local/bin/gitea-master-linux-amd64 generate secret SECRET_KEY | tail -n 1"'
@@ -143,6 +152,7 @@
         initial_internal_token: '{{ new_internal_token.stdout }}'
         initial_lfs_jwt_secret: '{{ new_lfs_jwt_secret.stdout }}'
         initial_secret_key: '{{ new_secret_key.stdout }}'
+        initial_oauth2_jwt_secret: '{{ new_lfs_jwt_secret.stdout }}'
 
     - name: removed unused latest binary
       file:
