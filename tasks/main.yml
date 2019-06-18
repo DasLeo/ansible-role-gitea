@@ -167,8 +167,9 @@
   template:
     src: gitea-app.ini.j2
     dest: /etc/gitea/app.ini
-    owner: root
-    mode: 0644
+    owner: gitea
+    group: root
+    mode: 0600
   notify: restart gitea
   when: gitea_config_exists.stat.exists == True
 
