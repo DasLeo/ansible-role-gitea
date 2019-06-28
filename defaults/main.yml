@@ -16,12 +16,7 @@ gitea_mailer_passwd: ''
 gitea_mailer_skip_ssl_verify: 'true'
 gitea_disable_registration: 'true'
 gitea_no_reply_address: noreply.example.net
-# memory , redis or memcache
 gitea_cache_adapter: memory
-# cache interval in seconds (only for memory adapter)
 gitea_cache_interval: 60
-# Redis: network=tcp,addr=127.0.0.1:6379,password=macaron,db=0,pool_size=100,idle_timeout=180
-# Memache: 127.0.0.1:9090;127.0.0.1:9091
 gitea_cache_host: ''
-# garbage collection interval in seconds (default: 1 day)
 gitea_gc_interval_time: 86400

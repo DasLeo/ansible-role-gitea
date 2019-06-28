@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: Philipp Leonhardt
+  role_name: ansible-role-gitea
+  description: Ansible Role - Gitea
+  min_ansible_version: 2.5.1
+  license: BSD-3-Clause
+  galaxy_tags:
+    - git
+    - gitea
+    - sourcecode
+    - selfhosted
+    - development
+    - sourcecontrol
+    - scm
+    - gogs
+  platforms:
+    - name: Ubuntu
+      versions:
+        - bionic
