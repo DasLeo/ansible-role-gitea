@@ -106,40 +106,48 @@
         mode: 0755
 
     - name: Generate internal token
-      shell: 'sudo -H -u gitea bash -c "/usr/local/bin/gitea-master-linux-amd64 generate secret INTERNAL_TOKEN | tail -n 1"'
+      shell: "/usr/local/bin/gitea-master-linux-amd64 generate secret INTERNAL_TOKEN | tail -n 1"
       args:
         chdir: "{{ gitea_directory }}"
+        executable: /bin/sh
       environment:
         GITEA_WORK_DIR: "{{ gitea_directory }}"
         USER: "{{ gitea_user }}"
       register: new_internal_token
+      become_user: "{{ gitea_user }}"
 
     - name: Generate LFS JWT secret
-      shell: 'sudo -H -u gitea bash -c "/usr/local/bin/gitea-master-linux-amd64 generate secret JWT_SECRET | tail -n 1"'
+      shell: "/usr/local/bin/gitea-master-linux-amd64 generate secret JWT_SECRET | tail -n 1"
       args:
         chdir: "{{ gitea_directory }}"
+        executable: /bin/sh
       environment:
         GITEA_WORK_DIR: "{{ gitea_directory }}"
         USER: "{{ gitea_user }}"
       register: new_lfs_jwt_secret
+      become_user: "{{ gitea_user }}"
 
     - name: Generate Oauth2 JWT secret
-      shell: 'sudo -H -u gitea bash -c "/usr/local/bin/gitea-master-linux-amd64 generate secret JWT_SECRET | tail -n 1"'
+      shell: "/usr/local/bin/gitea-master-linux-amd64 generate secret JWT_SECRET | tail -n 1"
       args:
         chdir: "{{ gitea_directory }}"
+        executable: /bin/sh
       environment:
         GITEA_WORK_DIR: "{{ gitea_directory }}"
         USER: "{{ gitea_user }}"
       register: new_oauth2_jwt_secret
+      become_user: "{{ gitea_user }}"
 
     - name: Generate secret key
-      shell: 'sudo -H -u gitea bash -c "/usr/local/bin/gitea-master-linux-amd64 generate secret SECRET_KEY | tail -n 1"'
+      shell: "/usr/local/bin/gitea-master-linux-amd64 generate secret SECRET_KEY | tail -n 1"
       args:
         chdir: "{{ gitea_directory }}"
+        executable: /bin/sh
       environment:
         GITEA_WORK_DIR: "{{ gitea_directory }}"
         USER: "{{ gitea_user }}"
       register: new_secret_key
+      become_user: "{{ gitea_user }}"
 
     - name: Create the app.ini file from the template
       template:
