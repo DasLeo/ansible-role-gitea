@@ -179,7 +179,7 @@
         owner: "{{ gitea_user }}"
         group: "{{ gitea_user }}"
         mode: 0755
-  when: gitea_config_exists.stat.exists == False
+  when: not gitea_config_exists.stat.exists
 
 - name: Copy Gitea config to host
   template:
@@ -189,7 +189,7 @@
     group: root
     mode: 0600
   notify: restart gitea
-  when: gitea_config_exists.stat.exists == True
+  when: gitea_config_exists.stat.exists
 
 - name: start Gitea systemd service
   systemd:
