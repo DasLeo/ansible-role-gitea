@@ -114,6 +114,7 @@
         GITEA_WORK_DIR: "{{ gitea_directory }}"
         USER: "{{ gitea_user }}"
       register: new_internal_token
+      become: yes
       become_user: "{{ gitea_user }}"
 
     - name: Generate LFS JWT secret
@@ -125,6 +126,7 @@
         GITEA_WORK_DIR: "{{ gitea_directory }}"
         USER: "{{ gitea_user }}"
       register: new_lfs_jwt_secret
+      become: yes
       become_user: "{{ gitea_user }}"
 
     - name: Generate Oauth2 JWT secret
@@ -136,6 +138,7 @@
         GITEA_WORK_DIR: "{{ gitea_directory }}"
         USER: "{{ gitea_user }}"
       register: new_oauth2_jwt_secret
+      become: yes
       become_user: "{{ gitea_user }}"
 
     - name: Generate secret key
@@ -147,6 +150,7 @@
         GITEA_WORK_DIR: "{{ gitea_directory }}"
         USER: "{{ gitea_user }}"
       register: new_secret_key
+      become: yes
       become_user: "{{ gitea_user }}"
 
     - name: Create the app.ini file from the template
