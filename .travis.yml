@@ -1,0 +1,18 @@
+---
+sudo: required
+language: python
+services:
+  - docker
+
+env:
+  matrix:
+    - MOLECULE_DISTRO: ubuntu1804
+
+before_install:
+  - sudo apt-get -qq update
+install:
+  - pip install molecule docker
+  # - pip install required driver (e.g. docker, python-vagrant, shade, boto, apache-libcloud)
+
+script:
+  - molecule test
