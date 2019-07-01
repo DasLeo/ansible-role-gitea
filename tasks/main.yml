@@ -32,9 +32,17 @@
     - name: download Gitea binary
       get_url:
         url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"
-        dest: /usr/local/bin/gitea
+        dest: /usr/local/bin/gitea-{{ gitea_version }}-linux-amd64
         owner: root
         mode: 0755
+
+    - name: Creating symlink to Gitea binary {{ gitea_version }}
+      file:
+        src: /usr/local/bin/gitea-{{ gitea_version }}-linux-amd64
+        dest: /usr/local/bin/gitea
+        state: link
+        force: yes
+      notify: restart gitea
   when: not gitea_binary.stat.exists
 
 - name: Update installation of Gitea binary
