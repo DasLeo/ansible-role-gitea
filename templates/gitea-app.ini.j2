@@ -3,9 +3,9 @@ RUN_USER = {{ gitea_user }}
 RUN_MODE = prod
 
 [security]
-INTERNAL_TOKEN = {% if initial_internal_token is defined %}{{ initial_internal_token }}{% else %}{{ gitea_internal_token }}{% endif %}{{''}}
+INTERNAL_TOKEN = {% if gitea_internal_token is defined %}{{ gitea_internal_token }}{% endif %}{{''}}
 INSTALL_LOCK   = true
-SECRET_KEY     = {% if initial_secret_key is defined %}{{ initial_secret_key }}{% else %}{{ gitea_secret_key }}{% endif %}{{''}}
+SECRET_KEY     = {% if gitea_secret_key is defined %}{{ gitea_secret_key }}{% endif %}{{''}}
 
 [database]
 DB_TYPE  = sqlite3
@@ -28,7 +28,7 @@ DISABLE_SSH      = {{ gitea_disable_ssh }}
 SSH_PORT         = {{ gitea_ssh_port }}
 LFS_START_SERVER = true
 LFS_CONTENT_PATH = {{ gitea_directory }}/data/lfs
-LFS_JWT_SECRET   = {% if initial_lfs_jwt_secret is defined %}{{ initial_lfs_jwt_secret }}{% else %}{{ gitea_lfs_jwt_secret }}{% endif %}{{''}}
+LFS_JWT_SECRET   = {% if gitea_lfs_jwt_secret is defined %}{{ gitea_lfs_jwt_secret }}{% endif %}{{''}}
 OFFLINE_MODE     = false
 
 [mailer]
@@ -87,4 +87,4 @@ DAILY_ROTATE   = true
 MAX_DAYS       = 7
 
 [oauth2]
-JWT_SECRET = {% if initial_oauth2_jwt_secret is defined %}{{ initial_oauth2_jwt_secret }}{% else %}{{ gitea_oauth2_jwt_secret }}{% endif %}{{''}}
+JWT_SECRET = {% if gitea_oauth2_jwt_secret is defined %}{{ gitea_oauth2_jwt_secret }}{% endif %}{{''}}

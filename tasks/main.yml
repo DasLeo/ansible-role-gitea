@@ -113,54 +113,6 @@
         owner: root
         mode: 0755
 
-    - name: Generate internal token
-      shell: "/usr/local/bin/gitea-master-linux-amd64 generate secret INTERNAL_TOKEN | tail -n 1"
-      args:
-        chdir: "{{ gitea_directory }}"
-        executable: /bin/sh
-      environment:
-        GITEA_WORK_DIR: "{{ gitea_directory }}"
-        USER: "{{ gitea_user }}"
-      register: new_internal_token
-      become: yes
-      become_user: "{{ gitea_user }}"
-
-    - name: Generate LFS JWT secret
-      shell: "/usr/local/bin/gitea-master-linux-amd64 generate secret JWT_SECRET | tail -n 1"
-      args:
-        chdir: "{{ gitea_directory }}"
-        executable: /bin/sh
-      environment:
-        GITEA_WORK_DIR: "{{ gitea_directory }}"
-        USER: "{{ gitea_user }}"
-      register: new_lfs_jwt_secret
-      become: yes
-      become_user: "{{ gitea_user }}"
-
-    - name: Generate Oauth2 JWT secret
-      shell: "/usr/local/bin/gitea-master-linux-amd64 generate secret JWT_SECRET | tail -n 1"
-      args:
-        chdir: "{{ gitea_directory }}"
-        executable: /bin/sh
-      environment:
-        GITEA_WORK_DIR: "{{ gitea_directory }}"
-        USER: "{{ gitea_user }}"
-      register: new_oauth2_jwt_secret
-      become: yes
-      become_user: "{{ gitea_user }}"
-
-    - name: Generate secret key
-      shell: "/usr/local/bin/gitea-master-linux-amd64 generate secret SECRET_KEY | tail -n 1"
-      args:
-        chdir: "{{ gitea_directory }}"
-        executable: /bin/sh
-      environment:
-        GITEA_WORK_DIR: "{{ gitea_directory }}"
-        USER: "{{ gitea_user }}"
-      register: new_secret_key
-      become: yes
-      become_user: "{{ gitea_user }}"
-
     - name: Create the app.ini file from the template
       template:
         src: gitea-app.ini.j2
@@ -168,11 +120,6 @@
         owner: gitea
         group: root
         mode: 0600
-      vars:
-        initial_internal_token: '{{ new_internal_token.stdout }}'
-        initial_lfs_jwt_secret: '{{ new_lfs_jwt_secret.stdout }}'
-        initial_secret_key: '{{ new_secret_key.stdout }}'
-        initial_oauth2_jwt_secret: '{{ new_lfs_jwt_secret.stdout }}'
 
     - name: removed unused latest binary
       file:
