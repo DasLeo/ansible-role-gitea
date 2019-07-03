@@ -104,8 +104,11 @@
     path: /etc/gitea/app.ini
   register: gitea_config_exists
 
-- name: generate new config file with tokens
+- name: generate new config file, secret key and admin user
   block:
+    - name: generate secret key
+      set_fact:
+        gitea_secret_key: "{{ lookup('password', '/dev/null length=64 chars=ascii_letters,digits') }}"
 
     - name: Create the app.ini file from the template
       template:
@@ -148,14 +151,51 @@
       become_user: "{{ gitea_user }}"
   when: not gitea_config_exists.stat.exists
 
-- name: Copy Gitea config to host
-  template:
-    src: gitea-app.ini.j2
-    dest: /etc/gitea/app.ini
-    owner: gitea
-    group: root
-    mode: 0600
-  notify: restart gitea
+- block:
+    - name: read internal token from current config
+      shell: awk -F "=" '/INTERNAL_TOKEN/ {print $2}' /etc/gitea/app.ini
+      register: internal_token
+      changed_when: false
+      when: gitea_internal_token is not defined
+    - set_fact:
+        gitea_internal_token: "{{ internal_token.stdout | trim }}"
+      when: gitea_internal_token is not defined
+
+    - name: read secret key from current config
+      shell: awk -F "=" '/SECRET_KEY/ {print $2}' /etc/gitea/app.ini
+      register: secret_key
+      changed_when: false
+      when: gitea_secret_key is not defined
+    - set_fact:
+        gitea_secret_key: "{{ secret_key.stdout | trim }}"
+      when: gitea_secret_key is not defined
+
+    - name: read LFS JWT secret from current config
+      shell: awk -F "=" '/LFS_JWT_SECRET/ {print $2}' /etc/gitea/app.ini
+      register: lfs_jwt_secret
+      changed_when: false
+      when: gitea_lfs_jwt_secret is not defined
+    - set_fact:
+        gitea_lfs_jwt_secret: "{{ lfs_jwt_secret.stdout | trim }}"
+      when: gitea_lfs_jwt_secret is not defined
+
+    - name: read Oauth2 JWT secret from current config
+      shell: awk -F "=" '/^JWT_SECRET/ {print $2}' /etc/gitea/app.ini
+      register: oauth2_jwt_secret
+      changed_when: false
+      when: gitea_oauth2_jwt_secret is not defined
+    - set_fact:
+        gitea_oauth2_jwt_secret: "{{ oauth2_jwt_secret.stdout | trim }}"
+      when: gitea_oauth2_jwt_secret is not defined
+
+    - name: Copy Gitea config to host
+      template:
+        src: gitea-app.ini.j2
+        dest: /etc/gitea/app.ini
+        owner: gitea
+        group: root
+        mode: 0600
+      notify: restart gitea
   when: gitea_config_exists.stat.exists
 
 - name: start Gitea systemd service
