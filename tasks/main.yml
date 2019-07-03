@@ -115,13 +115,37 @@
         group: root
         mode: 0600
 
-    - name: re-create gitea workdir
+    - name: create gitea workdir
       file:
         path: "{{ gitea_directory }}"
         state: directory
         owner: "{{ gitea_user }}"
         group: "{{ gitea_user }}"
         mode: 0755
+
+    - name: reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: start gitea systemd service
+      systemd:
+        name: gitea
+        state: started
+
+    - name: "Wait for port {{ gitea_http_port }} to become open on the host"
+      wait_for:
+        port: "{{ gitea_http_port }}"
+
+    - name: create initial admin user
+      shell: "/usr/local/bin/gitea admin create-user --config /etc/gitea/app.ini --name {{ gitea_admin_username }} --password {{ gitea_admin_password }} --email {{ gitea_admin_emailaddress }} --admin"
+      args:
+        chdir: "{{ gitea_directory }}"
+        executable: /bin/sh
+      environment:
+        GITEA_WORK_DIR: "{{ gitea_directory }}"
+        USER: "{{ gitea_user }}"
+      become: yes
+      become_user: "{{ gitea_user }}"
   when: not gitea_config_exists.stat.exists
 
 - name: Copy Gitea config to host

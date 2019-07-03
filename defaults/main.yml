@@ -3,6 +3,9 @@
 gitea_user: gitea
 gitea_version: 1.8.3
 gitea_directory: /var/lib/gitea
+gitea_admin_username: gitadmin
+gitea_admin_password: superstrongpassword
+gitea_admin_emailaddress: gitadmin@example.com
 gitea_disable_ssh: 'false'
 gitea_domain: git.example.net
 gitea_root_url: 'https://git.example.net/'
