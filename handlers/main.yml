@@ -1,5 +1,10 @@
 ---
 
+- name: start gitea
+  systemd:
+    name: gitea
+    state: started
+    enabled: yes
 # no reload command available for gitea.service
 - name: restart gitea
   systemd:
