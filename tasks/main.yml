@@ -106,12 +106,6 @@
 
 - name: generate new config file with tokens
   block:
-    - name: download latest Gitea binary required for token generation
-      get_url:
-        url: https://dl.gitea.io/gitea/master/gitea-master-linux-amd64
-        dest: /usr/local/bin/gitea-master-linux-amd64
-        owner: root
-        mode: 0755
 
     - name: Create the app.ini file from the template
       template:
@@ -120,16 +114,6 @@
         owner: gitea
         group: root
         mode: 0600
-
-    - name: removed unused latest binary
-      file:
-        path: /usr/local/bin/gitea-master-linux-amd64
-        state: absent
-
-    - name: delete temporarily created files
-      file:
-        path: "{{ gitea_directory }}"
-        state: absent
 
     - name: re-create gitea workdir
       file:
