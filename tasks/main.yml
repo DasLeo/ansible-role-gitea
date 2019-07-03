@@ -139,8 +139,14 @@
       wait_for:
         port: "{{ gitea_http_port }}"
 
-    - name: create initial admin user
-      shell: "/usr/local/bin/gitea admin create-user --config /etc/gitea/app.ini --name {{ gitea_admin_username }} --password {{ gitea_admin_password }} --email {{ gitea_admin_emailaddress }} --admin"
+    - name: initial Gitea admin user
+      shell: >
+        /usr/local/bin/gitea admin create-user
+        --config /etc/gitea/app.ini
+        --name {{ gitea_admin_username }}
+        --password {{ gitea_admin_password }}
+        --email {{ gitea_admin_emailaddress }}
+        --admin
       args:
         chdir: "{{ gitea_directory }}"
         executable: /bin/sh
@@ -157,7 +163,8 @@
       register: internal_token
       changed_when: false
       when: gitea_internal_token is not defined
-    - set_fact:
+    - name: set internal token from config as fact
+      set_fact:
         gitea_internal_token: "{{ internal_token.stdout | trim }}"
       when: gitea_internal_token is not defined
 
@@ -166,7 +173,8 @@
       register: secret_key
       changed_when: false
       when: gitea_secret_key is not defined
-    - set_fact:
+    - name: set secret key from config as fact
+      set_fact:
         gitea_secret_key: "{{ secret_key.stdout | trim }}"
       when: gitea_secret_key is not defined
 
@@ -175,7 +183,8 @@
       register: lfs_jwt_secret
       changed_when: false
       when: gitea_lfs_jwt_secret is not defined
-    - set_fact:
+    - name: set LFS JWK secret from config as fact
+      set_fact:
         gitea_lfs_jwt_secret: "{{ lfs_jwt_secret.stdout | trim }}"
       when: gitea_lfs_jwt_secret is not defined
 
@@ -184,7 +193,8 @@
       register: oauth2_jwt_secret
       changed_when: false
       when: gitea_oauth2_jwt_secret is not defined
-    - set_fact:
+    - name: set Oauth2 JWT secret from config as fact
+      set_fact:
         gitea_oauth2_jwt_secret: "{{ oauth2_jwt_secret.stdout | trim }}"
       when: gitea_oauth2_jwt_secret is not defined
 
