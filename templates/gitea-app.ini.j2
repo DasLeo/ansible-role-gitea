@@ -32,11 +32,11 @@ LFS_JWT_SECRET   = {% if gitea_lfs_jwt_secret is defined %}{{ gitea_lfs_jwt_secr
 OFFLINE_MODE     = false
 
 [mailer]
-ENABLED = true
-HOST    = {{ gitea_mailer_host }}
-FROM    = {{ gitea_mailer_from }}
-USER    = {{ gitea_mailer_user }}
-PASSWD  = {{ gitea_mailer_passwd }}
+ENABLED     = true
+HOST        = {{ gitea_mailer_host }}
+FROM        = {{ gitea_mailer_from }}
+USER        = {{ gitea_mailer_user }}
+PASSWD      = {{ gitea_mailer_passwd }}
 SKIP_VERIFY = {{ gitea_mailer_skip_ssl_verify }}
 
 [service]
@@ -66,7 +66,6 @@ HOST     = {{ gitea_cache_host }}
 [session]
 PROVIDER         = file
 GC_INTERVAL_TIME = {{ gitea_gc_interval_time }}
-
 
 [log]
 ; MODE      = file,console
