@@ -191,4 +191,5 @@
         USER: "{{ gitea_user }}"
       become: yes
       become_user: "{{ gitea_user }}"
+      changed_when: false
   when: not gitea_config_exists.stat.exists
