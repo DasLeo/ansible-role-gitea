@@ -176,8 +176,8 @@
       wait_for:
         port: "{{ gitea_http_port }}"
 
-    - name: initial Gitea admin user
-      shell: >
+    - name: create initial Gitea admin user
+      command: >
         /usr/local/bin/gitea admin create-user
         --config /etc/gitea/app.ini
         --name {{ gitea_admin_username }}
@@ -186,7 +186,6 @@
         --admin
       args:
         chdir: "{{ gitea_directory }}"
-        executable: /bin/sh
       environment:
         GITEA_WORK_DIR: "{{ gitea_directory }}"
         USER: "{{ gitea_user }}"
